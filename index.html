@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Weather Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .weather-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .favorite-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Weather Dashboard</h1>
+    
+    <div>
+        <input type="text" id="countryInput" placeholder="Enter country name">
+        <button onclick="getWeather()">Get Weather</button>
+    </div>
+
+    <div id="weatherResult" class="weather-card"></div>
+
+    <h2 style="color: #2c3e50; font-size: 28px; margin: 30px 0 20px; text-align: center; text-transform: uppercase; letter-spacing: 2px; border-bottom: 3px solid #3498db; padding-bottom: 10px;">Favorite Countries</h2>
+    <div id="favorites" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px 0;"></div>
+
+    <script src="config.js"></script>
+    <script>
+        // Simple in-memory database (localStorage)
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        function getWeather() {
+            const location = document.getElementById('countryInput').value;
+            const apiKey = config.WEATHER_API_KEY;
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const locationInfo = {
+                        name: data.name,
+                        country: data.sys.country,
+                        coords: {
+                            lat: data.coord.lat,
+                            lon: data.coord.lon
+                        }
+                    };
+                    
+                    const weatherHtml = `
+                        <h2>${data.name}, ${data.sys.country}</h2>
+                        <p>Temperature: ${data.main.temp}°C</p>
+                        <p>Weather: ${data.weather[0].main}</p>
+                        <p>Humidity: ${data.main.humidity}%</p>
+                        <button class="favorite-btn" onclick='addToFavorites(${JSON.stringify(locationInfo)})'>
+                            Add to Favorites
+                        </button>
+                    `;
+                    document.getElementById('weatherResult').innerHTML = weatherHtml;
+                })
+                .catch(error => {
+                    document.getElementById('weatherResult').innerHTML = 'Error: Location not found. Please try another city, region or country.';
+                });
+        }
+
+        function addToFavorites(location) {
+            if (!favorites.some(fav => fav.name === location.name && fav.country === location.country)) {
+                favorites.push(location);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                displayFavorites();
+            }
+        }
+
+        function removeFromFavorites(name, country) {
+            favorites = favorites.filter(fav => !(fav.name === name && fav.country === country));
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            displayFavorites();
+        }
+
+        function displayFavorites() {
+            const favoritesHtml = favorites.map(location => `
+                <div class="weather-card">
+                    <p>${location.name}, ${location.country}</p>
+                    <p class="coords">Lat: ${location.coords.lat.toFixed(2)}, Lon: ${location.coords.lon.toFixed(2)}</p>
+                    <button onclick="removeFromFavorites('${location.name}', '${location.country}')">Remove</button>
+                </div>
+            `).join('');
+            document.getElementById('favorites').innerHTML = favoritesHtml;
+        }
+
+        // Update placeholder text
+        document.getElementById('countryInput').placeholder = "Enter city, region or country";
+        
+        // Display favorites on page load
+        displayFavorites();
+    </script>
+</body>
+</html>
+<style>
+    body {
+        background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+    .cloud {
+        position: fixed;
+        width: 100px;
+        height: auto;
+        opacity: 0.8;
+        z-index: -1;
+        animation: float 15s infinite linear;
+    }
+
+    .cloud-1 {
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .cloud-2 {
+        top: 40%;
+        left: 75%;
+        animation-delay: -5s;
+    }
+
+    .cloud-3 {
+        top: 60%;
+        left: 40%;
+        animation-delay: -10s;
+    }
+
+    @keyframes float {
+        from {
+            transform: translateX(-100px);
+        }
+        to {
+            transform: translateX(calc(100vw + 100px));
+        }
+    }
+
+    .weather-card {
+        background-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<style>
+    h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input[type="text"] {
+        padding: 12px;
+        border: none;
+        border-radius: 25px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        width: 250px;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    button {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 25px;
+        background: #4CAF50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .weather-card {
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        transition: transform 0.3s ease;
+    }
+
+    .weather-card:hover {
+        transform: translateY(-5px);
+    }
+
+    #favorites {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            padding: 10px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            width: 100%;
+        }
+    }
+    button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background: #4CAF50;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .weather-card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    #favorites {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            padding: 10px;
+        }
+        
+        input[type="text"],
+        button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+<script>
+    // Function to get the current SHA of favorites.json
+    async function getCurrentSHA() {
+        try {
+            const response = await fetch('https://api.github.com/repos/FUTURE_FS_02/contents/favorites.json');
+            const data = await response.json();
+            return data.sha;
+        } catch (error) {
+            console.error('Error getting current SHA:', error);
+            return null;
+        }
+    }
+
+    // Function to sync favorites with GitHub
+    async function syncWithGitHub() {
+        const token = 'YOUR_GITHUB_TOKEN'; // Replace with your GitHub personal access token
+        
+        try {
+            // Get current SHA
+            const currentSHA = await getCurrentSHA();
+            
+            // Prepare the content
+            const content = btoa(JSON.stringify(favorites));
+            
+            // Make the API request
+            const response = await fetch('https://api.github.com/repos/FUTURE_FS_02/contents/favorites.json', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: 'Update favorites',
+                    content: content,
+                    sha: currentSHA
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to sync with GitHub');
+            }
+
+            console.log('Successfully synced with GitHub');
+        } catch (error) {
+            console.error('Error syncing with GitHub:', error);
+        }
+    }
+
+    // Add event listener to sync button
+    document.getElementById('syncButton').addEventListener('click', syncWithGitHub);
+</script>
