@@ -222,12 +222,44 @@ Try me out! 🚀
             else:
                 return "🤔 To compare cryptos, mention two of them! Like 'Compare Bitcoin and Ethereum' 📊"
         
+        # Trending/rising queries
+        elif any(word in user_input for word in ['trending', 'rising', 'going up', 'trending up', 'bullish']):
+            rising_cryptos = [name for name, data in self.crypto_db.items() if data["price_trend"] == "rising"]
+            if rising_cryptos:
+                crypto_list = ", ".join(rising_cryptos)
+                return f"📈 Trending up right now: {crypto_list}! These coins are showing upward momentum! 🚀"
+            else:
+                return "📊 No clear upward trends detected right now. Market seems stable!"
+        
+        # Most sustainable query
+        elif any(phrase in user_input for phrase in ['most sustainable', 'greenest', 'most eco']):
+            most_sustainable = max(self.crypto_db, key=lambda x: self.crypto_db[x]["sustainability_score"])
+            score = self.crypto_db[most_sustainable]["sustainability_score"] * 10
+            return f"🌿 {most_sustainable} is the most sustainable choice with a {score:.1f}/10 eco-score! Perfect for green investing! 🌱"
+        
         # Specific crypto info
         elif any(f'about {crypto.lower()}' in user_input or crypto.lower() in user_input 
                 for crypto in self.crypto_db.keys()):
             for crypto in self.crypto_db.keys():
                 if crypto.lower() in user_input:
                     return self.get_crypto_info(crypto)
+        
+        # Highest/lowest queries
+        elif 'highest price' in user_input or 'most expensive' in user_input:
+            high_cap_cryptos = [name for name, data in self.crypto_db.items() if data["market_cap"] == "high"]
+            return f"💰 Highest market cap cryptos: {', '.join(high_cap_cryptos)}. These are the blue chips! 💎"
+        
+        elif 'lowest energy' in user_input or 'least energy' in user_input:
+            low_energy_cryptos = [name for name, data in self.crypto_db.items() if data["energy_use"] == "low"]
+            return f"⚡ Most energy-efficient: {', '.join(low_energy_cryptos)}. Power-saving champions! 🌿"
+        
+        # Volatile/risky queries
+        elif any(word in user_input for word in ['volatile', 'risky', 'unstable', 'crazy']):
+            volatile_cryptos = [name for name, data in self.crypto_db.items() if data["price_trend"] == "volatile"]
+            if volatile_cryptos:
+                return f"🎢 Most volatile: {', '.join(volatile_cryptos)}. Buckle up for the ride! High risk, high reward! 💥"
+            else:
+                return "📊 No extremely volatile cryptos in my current database. Most are showing stable or rising trends!"
         
         # Recommendation patterns
         elif any(word in user_input for word in ['recommend', 'suggest', 'want', 'looking for', 'best']):
