@@ -116,6 +116,16 @@ class CryptoBuddy:
             recommendations = list(efficient_cryptos.keys())
             response_prefix = "⚡ Energy efficient choices coming right up!"
             
+        elif "beginner" in preference.lower() or "new" in preference.lower() or "start" in preference.lower():
+            # Beginner-friendly cryptos
+            recommendations = ["Ethereum", "Cardano"]
+            response_prefix = "🌟 Perfect for beginners! These are reliable and well-established:"
+            
+        elif "general" in preference.lower() or not any(keyword in preference.lower() for keyword in ['sustainable', 'high', 'stable', 'low', 'beginner']):
+            # Default recommendation - mix of different cryptos
+            recommendations = ["Cardano", "Ethereum", "Solana"]
+            response_prefix = "🎯 Here are some well-rounded options for you:"
+            
         else:
             # Default recommendation - mix of different cryptos
             recommendations = ["Cardano", "Ethereum", "Solana"]
@@ -261,17 +271,78 @@ Try me out! 🚀
             else:
                 return "📊 No extremely volatile cryptos in my current database. Most are showing stable or rising trends!"
         
-        # Recommendation patterns
-        elif any(word in user_input for word in ['recommend', 'suggest', 'want', 'looking for', 'best']):
+        # Recommendation patterns (expanded for natural conversation)
+        elif any(word in user_input for word in ['recommend', 'suggest', 'want', 'looking for', 'best', 'good', 'invest', 'buy', 'portfolio', 'pick']):
             return self.recommend_by_preference(user_input)
         
         # Goodbye patterns
         elif any(word in user_input for word in ['bye', 'goodbye', 'exit', 'quit', 'thanks', 'thank you']):
             return "👋 Thanks for chatting with CryptoBuddy! May your portfolio be ever green! 🚀💎 See you next time!"
         
-        # Default response
+        # Default response - be more helpful and conversational
         else:
-            return "🤔 I'm not sure I understand. Try asking about a specific crypto, requesting recommendations, or type 'help' for commands! 😊"
+            # Try to be helpful based on partial matches
+            if any(word in user_input for word in ['crypto', 'coin', 'invest', 'buy', 'money']):
+                return """
+🤖 I can see you're interested in crypto! Here's what I can help you with:
+
+💡 **Quick suggestions:**
+- Ask "I want sustainable crypto" for eco-friendly options
+- Say "recommend something" for general suggestions  
+- Try "tell me about Bitcoin" for specific coin info
+- Ask "what's trending?" to see rising cryptos
+
+🎯 **Popular questions:**
+- "Which crypto is most sustainable?"
+- "Compare Bitcoin and Ethereum"
+- "Show me stable options"
+- "What's the market overview?"
+
+What specifically interests you about crypto? 🚀
+                """
+            
+            elif any(word in user_input for word in ['stable', 'safe', 'secure']):
+                return """
+🛡️ Looking for stability? Smart choice! Here are some stable crypto options:
+
+🏦 **Stable cryptos in my database:**
+- **Ethereum** - Stable trend, high market cap
+- **Polygon** - Stable and energy efficient
+
+💡 Want more details? Ask "tell me about Ethereum" or "I want stable crypto recommendations"!
+                """
+            
+            elif any(word in user_input for word in ['where', 'how', 'platform', 'exchange']):
+                return """
+🏪 **Where to invest in crypto:**
+
+Popular platforms include Coinbase, Binance, Kraken, and many others. But I'm here to help you **choose WHICH cryptos** to invest in! 
+
+🎯 Try asking:
+- "I want sustainable crypto"
+- "Recommend high return options"
+- "Tell me about Bitcoin"
+- "Compare different cryptos"
+
+What type of crypto investment interests you? 💎
+                """
+            
+            else:
+                return """
+👋 Hey there! I'm CryptoBuddy and I love talking crypto! 
+
+🤖 **I can help you:**
+- Learn about specific cryptocurrencies
+- Get personalized recommendations  
+- Compare different cryptos
+- Find sustainable/eco-friendly options
+- See market trends and insights
+
+💬 **Just tell me what you're thinking!** For example:
+"I want to invest in something green" or "What's a good crypto for beginners?"
+
+What's on your mind about crypto? 🚀
+                """
 
 def main():
     print("🚀 Welcome to CryptoBuddy! 🚀")
