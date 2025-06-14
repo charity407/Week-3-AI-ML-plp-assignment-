@@ -2,3 +2,15 @@ modules = ["python-3.12"]
 
 [nix]
 channel = "stable-24_05"
+
+[workflows]
+runButton = "Run CryptoBuddy"
+
+[[workflows.workflow]]
+name = "Run CryptoBuddy"
+author = 38136212
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python crypto_buddy_chatbot.py"
