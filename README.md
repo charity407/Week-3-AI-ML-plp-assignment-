@@ -93,5 +93,8 @@ Video: ✅ Uploaded on LMS
 Teamwork: ✅ All members contributed to code, report, and video
 
 🤝 Group Members
-
-    Denis Omwoyo 
+Charity Muigai
+Lucy Ann Mwangi
+Denis Omwoyo
+Steven Kingoro Wanjala
+Antony Kaisa
